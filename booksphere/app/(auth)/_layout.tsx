@@ -1,8 +1,8 @@
 //Author: Joyce V. F. Santos
-//Scaffolding the auth files 
+//Scaffolding the auth files
 
-import { Stack } from 'expo-router';
 import React from 'react';
+import { Stack } from 'expo-router';
 
 export default function AuthLayout() {
   return (

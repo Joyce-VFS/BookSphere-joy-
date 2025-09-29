@@ -1,6 +1,7 @@
 // Author: Joyce V. F. Santos
 // SignUp screen with AsyncStorage
-import { useState } from "react";
+
+import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -46,6 +47,8 @@ export default function SignUp() {
         style={styles.input}
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
       <TextInput
         placeholder="Password"
