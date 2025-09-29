@@ -1,0 +1,19 @@
+[33m6d26c30[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/auth-flow[m[33m, [m[1;31mmyfork/feat/auth-flow[m[33m)[m Resolved merge conflicts: keep feat/auth-flow versions
+[33m6d4f376[m Restore simple auth screens (SignIn/SignUp/_layout) - keep feature branch flow
+[33m32e2def[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #2 from Saad220905/profile-page
+[33md1dd99f[m[33m ([m[1;31morigin/profile-page[m[33m)[m edit .gitignore
+[33m2f4caed[m[33m ([m[1;32mmain[m[33m)[m Update README.md - no firebase
+[33m3965696[m[33m ([m[1;32mfeat/auth-backend-mongodb[m[33m)[m Setup auth-first flow with SignIn and SignUp screens and web redirect
+[33m06d670a[m switch auth context from mock-auth to auth
+[33m60e8cda[m add auth for mongodb & auth pages
+[33m1452b97[m[33m ([m[1;32mfix/missing-assets[m[33m)[m Delete .* directory
+[33mf49bc7a[m Delete booksphere/.vscode directory
+[33m403e0ff[m Update README.md
+[33m2eec631[m switched to mobile
+[33m615769e[m switched to mobile
+[33m74e1649[m change name to BookSphere
+[33m9fb0e6a[m Update README.md to account for latest MVP targets
+[33m9674494[m modify to operate as a web platform instead of mobile
+[33me629adc[m Update README.md
+[33m175bf22[m initialize react app
+[33m5dd709e[m first commit
