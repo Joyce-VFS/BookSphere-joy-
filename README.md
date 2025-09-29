@@ -64,4 +64,3 @@ BookSphere is a comprehensive social platform for book lovers to share video rev
 - Node.js (v16 or later)
 - npm or yarn
 - Expo CLI (`npm install -g @expo/cli`)
-- Firebase account
