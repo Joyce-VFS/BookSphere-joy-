@@ -5,7 +5,7 @@ export async function signupUser(data: {
   firstName: string;
   lastName: string;
 }) {
-  const response = await fetch('http://localhost:5000/api/auth/register', { // <- your Express register route path
+  const response = await fetch('http://localhost:5000/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -14,7 +14,7 @@ export async function signupUser(data: {
 }
 
 export async function signinUser(email: string, password: string) {
-  const response = await fetch('http://localhost:5000/api/auth/login', { // <- your Express login route path
+  const response = await fetch('http://localhost:5000/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -23,12 +23,9 @@ export async function signinUser(email: string, password: string) {
 }
 
 export async function verifyUserToken(token: string) {
-  const response = await fetch('http://localhost:5000/api/auth/me', {
+  const response = await fetch('http://localhost:5000/api/me', {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.json();
 }

@@ -1,59 +1,25 @@
-// api/auth/login.ts
-// Frontend helper to call the backend login endpoint.
-// Adjust the BACKEND_URL if your backend is somewhere else.
+// server/api-auth-backup/login.ts
+import { Router, Request, Response } from "express";
+import { authenticateUser } from "../lib/auth";
 
-export type LoginResponse = {
-  success: boolean;
-  message?: string;
-  user?: {
-    id?: string;
-    _id?: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    username?: string;
-  };
-  token?: string;
-};
+const router = Router();
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
+// POST /api/auth/login
+router.post("/", async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
-export async function login(email: string, password: string): Promise<LoginResponse> {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const result = await authenticateUser(email, password);
 
-    // Try to parse JSON even on non-2xx so we can show backend message
-    const payload = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      // backend may return { error: "..."} or { message: "..." }
-      const message = (payload && (payload.error || payload.message)) || 'Login failed';
-      return { success: false, message };
+    if (!result.success) {
+      return res.status(400).json(result);
     }
 
-    // Expected backend shape: { user: {...}, token: "..." }
-    const user = payload.user || null;
-    const token = payload.token || payload.accessToken || null;
-
-    return {
-      success: true,
-      message: payload.message,
-      user,
-      token,
-    };
-  } catch (error: any) {
-    // Network / unexpected error
-    return {
-      success: false,
-      message: error?.message || 'Network error',
-    };
+    res.json(result);
+  } catch (err: any) {
+    console.error("Login error:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
-}
+});
 
-export default login;
+export default router;

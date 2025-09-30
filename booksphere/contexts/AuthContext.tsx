@@ -1,125 +1,85 @@
-// contexts/AuthContext.tsx
+// booksphere/contexts/AuthContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { signinUser, signupUser, verifyUserToken } from '../lib/api-auth'; // <-- relative import to lib/api-auth
+import { signinUser, signupUser, verifyUserToken } from '../lib/api-auth';
 
 type User = {
-  id?: string;
   _id?: string;
-  email?: string;
+  email: string;
   firstName?: string;
   lastName?: string;
-  username?: string;
-};
-
-type AuthResult = {
-  success: boolean;
-  message?: string;
-  user?: any;
-  token?: string;
 };
 
 type AuthContextType = {
   user: User | null;
-  isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<AuthResult>;
-  signup: (data: { email: string; password: string; firstName: string; lastName: string }) => Promise<AuthResult>;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string; token?: string; user?: User }>;
+  register: (payload: { email: string; password: string; firstName: string; lastName: string }) => Promise<any>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const TOKEN_KEY = 'token';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
+    const init = async () => {
       try {
-        const token = await AsyncStorage.getItem(TOKEN_KEY);
-        if (!token) {
-          if (mounted) setIsLoading(false);
-          return;
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          const res = await verifyUserToken(token);
+          if (res?.success && res.user) {
+            setUser(res.user);
+          } else {
+            await AsyncStorage.removeItem('token');
+            setUser(null);
+          }
         }
-        const profile = await verifyUserToken(token);
-        if (mounted && profile?.user) setUser({ ...profile.user, id: profile.user.id ?? profile.user._id });
       } catch (err) {
-        console.warn('auth init error', err);
+        console.warn('Auth init err', err);
+        setUser(null);
       } finally {
-        if (mounted) setIsLoading(false);
+        setIsLoading(false);
       }
-    })();
-    return () => { mounted = false; };
+    };
+    init();
   }, []);
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const res = await signinUser(email, password);
-      if (res.success && res.token) {
-        await AsyncStorage.setItem(TOKEN_KEY, res.token);
-        const normalized = res.user ? { ...res.user, id: res.user.id ?? res.user._id } : null;
-        if (normalized) setUser(normalized);
-      }
-      return res;
-    } catch (err: any) {
-      console.error('login error', err);
-      return { success: false, message: err?.message ?? 'Login failed' };
-    } finally {
-      setIsLoading(false);
+    const res = await signinUser(email, password);
+    if (res?.success && res.token) {
+      await AsyncStorage.setItem('token', res.token);
+      setUser(res.user ?? null);
     }
+    return res;
   };
 
-  const signup = async (data: { email: string; password: string; firstName: string; lastName: string }) => {
-    setIsLoading(true);
-    try {
-      const res = await signupUser(data);
-      if (res.success && res.token) {
-        await AsyncStorage.setItem(TOKEN_KEY, res.token);
-        const normalized = res.user ? { ...res.user, id: res.user.id ?? res.user._id } : null;
-        if (normalized) setUser(normalized);
-      }
-      return res;
-    } catch (err: any) {
-      console.error('signup error', err);
-      return { success: false, message: err?.message ?? 'Signup failed' };
-    } finally {
-      setIsLoading(false);
+  const register = async (payload: { email: string; password: string; firstName: string; lastName: string }) => {
+    const res = await signupUser(payload);
+    if (res?.success && res.token) {
+      await AsyncStorage.setItem('token', res.token);
+      setUser(res.user ?? null);
     }
+    return res;
   };
 
   const signOut = async () => {
-    setIsLoading(true);
-    try {
-      await AsyncStorage.removeItem(TOKEN_KEY);
-      setUser(null);
-    } catch (err) {
-      console.error('signOut error', err);
-    } finally {
-      setIsLoading(false);
-    }
+    await AsyncStorage.removeItem('token');
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated: !!user,
-      isLoading,
-      login,
-      signup,
-      signOut,
-    }}>
+    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, login, register, signOut }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
-};
+}

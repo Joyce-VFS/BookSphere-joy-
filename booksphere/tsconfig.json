@@ -22,5 +22,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     ".next/types/**/*.ts"
-  ]
+, "server/lib/auth.js", "server/lib/mongodb.js"  ]
 }

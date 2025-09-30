@@ -1,19 +1,25 @@
-import { createUser, authenticateUser } from '../../../lib/auth';
+// server/api-auth-backup/signup.ts
+import { Router, Request, Response } from "express";
+import { createUser } from "../lib/auth";
 
-export const signupHandler = async (data: { email: string; password: string; firstName: string; lastName: string }) => {
-  try {
-    const user = await createUser(data); // returns your user object
-    return { success: true, user };
-  } catch (err) {
-    return { success: false, message: (err as Error).message };
-  }
-};
+const router = Router();
 
-export const loginHandler = async (data: { email: string; password: string }) => {
+// POST /api/auth/signup
+router.post("/", async (req: Request, res: Response) => {
+  const { email, password, firstName, lastName } = req.body;
+
   try {
-    const user = await authenticateUser(data.email, data.password);
-    return { success: true, user };
-  } catch (err) {
-    return { success: false, message: (err as Error).message };
+    const result = await createUser({ email, password, firstName, lastName });
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    res.json(result);
+  } catch (err: any) {
+    console.error("Signup error:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
-};
+});
+
+export default router;
