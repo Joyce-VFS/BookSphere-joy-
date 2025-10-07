@@ -10,6 +10,9 @@ const MONGO = process.env.MONGODB_URI || "mongodb://localhost:27017/booksphere-d
 const app = express();
 app.use(cors());
 app.use(express.json());
+// server/index.js 
+console.log('Using MONGODB_URI env:', process.env.MONGODB_URI);
+console.log('Using PORT env:', process.env.PORT);
 
 // Connect to MongoDB
 mongoose
