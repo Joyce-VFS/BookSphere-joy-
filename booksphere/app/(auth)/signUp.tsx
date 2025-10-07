@@ -25,7 +25,7 @@ export default function Signup() {
         await AsyncStorage.setItem("token", data.token);
         router.replace("/(tabs)");
       } else {
-        setError(data.message);
+        setError(data.message || "Signup failed");
       }
     } catch (err) {
       console.error(err);

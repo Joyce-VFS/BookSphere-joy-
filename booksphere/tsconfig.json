@@ -1,26 +1,32 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "jsx": "react-native",
     "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
       ]
-    },
-    "incremental": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "app/**/*",
+    "server/lib/auth.js",
+    "server/lib/mongodb.js",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    ".next/types/**/*.ts"
-, "server/lib/auth.js", "server/lib/mongodb.js"  ]
+    "expo-env.d.ts"
+  ],
+  "extends": "expo/tsconfig.base"
 }
